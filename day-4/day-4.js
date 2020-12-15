@@ -5,27 +5,40 @@ const input = './input.txt'
 
 
 
+// const main = () => {
+//   fs.readFile(input, 'utf-8', (err, data) => {
+//     if (err) throw err;
+//     const dataArr = data.split('\n\n');
+//     const cleanSplitArr = dataArr.map(element => {
+//       return removeItemAll(element.split(''), '\n').join('').split(' ');
+//     });
+//     // let makeKeyVal = fo
+//     const passportArray = [];
+//     for (let passport of cleanSplitArr) {
+//       const passportMap = {};
+//       for (let line of passport) {
+//         const [key, val] = [...line.split(':')];
+//         passportMap[key] = val;
+//       }
+//       passportArray.push(passportMap);
+//     }
+//     let validPassports = countValidPassports(passportArray);
+//     console.log(validPassports);
+//   })
+// }
+
+
 const main = () => {
   fs.readFile(input, 'utf-8', (err, data) => {
     if (err) throw err;
-    const dataArr = data.split('\n\n');
-    const cleanSplitArr = dataArr.map(element => {
-      return removeItemAll(element.split(''), '\n').join('').split(' ');
-    });
-    // let makeKeyVal = fo
-    const passportArray = [];
-    for (let passport of cleanSplitArr) {
-      const passportMap = {};
-      for (let line of passport) {
-        const [key, val] = [...line.split(':')];
-        passportMap[key] = val;
-      }
-      passportArray.push(passportMap);
-    }
-    let validPassports = countValidPassports(passportArray);
-    console.log(validPassports);
+    let stuff = data.split("\n\n").filter(passport => {x = passport.split(/\n|\s/).reduce((a,f) => ({...a, [f.split(":")[0]] : f.split(":")[1] }) , {}) 
+      let valid = `byr:19[2-9]\\d\|(200[0-2]) iyr:201\\d|(2020) eyr:202\\d|(2030) ecl:^amb\|blu\|brn\|gry\|grn\|hzl\|oth$ pid:^\\d{9}$ hcl:#[a-z0-f]{6} hgt:(1[5-8]\\d\|19[0-3])cm\|(59\|6\\d\|7[0-6])in`
+      return valid.split(/\n|\s/).reduce((acc,cur) => RegExp(cur.split(":")[1]).test(x[cur.split(":")[0]]) && acc, true)
+    }).length
+    console.log(stuff);
   })
 }
+
 
 function removeItemAll(arr, value) {
   var i = 0;
@@ -96,27 +109,21 @@ const countValidPassports = (passportArr) => {
 }
 
 const verifyPassportValues = (passport) => {
-  let isValid = false;
+  let isValid = true;
   const passportFields = ['byr','iyr','eyr','hgt','hcl','ecl','pid','cid'];
   for (let key of passportFields) {
       if (key === 'byr') {
-        if (parseInt(passport[key]) >= 1920 && parseInt(passport[key]) <= 2002) {
-          isValid = true;
-        } else {
+        if (!(parseInt(passport[key]) >= 1920 && parseInt(passport[key]) <= 2002)) {
           isValid = false;
           break;
-        } 
+        }
       } else if (key === 'iyr') {
-        if (parseInt(passport[key]) >= 2010 && parseInt(passport[key]) <= 2020) {
-          isValid = true;
-        } else {
+        if (!(parseInt(passport[key]) >= 2010 && parseInt(passport[key]) <= 2020)) {
           isValid = false;
           break;
         }
       } else if (key === 'eyr') {
-        if (parseInt(passport[key]) >= 2020 && parseInt(passport[key]) <= 2030) {
-          isValid = true
-        } else {
+        if (!(parseInt(passport[key]) >= 2020 && parseInt(passport[key]) <= 2030)) { 
           isValid = false;
           break;
         }
@@ -126,41 +133,31 @@ const verifyPassportValues = (passport) => {
         let regChar = /cm|in/;
         let regNum = /\d+/;
         if (passport[key].match(regChar) && passport[key].match(regChar)[0] === 'in') {
-          if (passport[key].match(regNum)[0] >= 59 && (passport[key].match(regNum)[0]) <= 76) {
-            isValid = true            
-          } else {
+          if (!(passport[key].match(regNum)[0] >= 59 && (passport[key].match(regNum)[0]) <= 76)) {
             isValid = false;
             break;
           }
         } else if (passport[key].match(regChar) && passport[key].match(regChar)[0] === 'cm') {
-          if (passport[key].match(regNum)[0] >= 150 && (passport[key].match(regNum)[0]) <= 193) {
-            isValid = true;
-          } else {
+          if (!(passport[key].match(regNum)[0] >= 150 && (passport[key].match(regNum)[0]) <= 193)) {
             isValid = false;
             break;
           }
         }
       } else if (key === 'hcl') {
         let regHex = /#[0-9a-f]{6}$/;
-        if (passport[key].match(regHex)) {
-          isValid = true;
-        } else {
+        if (!(passport[key].match(regHex))) {
           isValid = false;
           break;
         }
       } else if (key === 'ecl') {
         const eclArray = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
-        if (eclArray.indexOf(passport[key]) !== -1) {
-          isValid = true;
-        } else {
+        if (!(eclArray.indexOf(passport[key]) !== -1)) {
           isValid = false;
           break;
         }
       } else if (key === 'pid') {
         const reg = /\d{9}/;
-        if (parseInt(passport[key]) && passport[key].match(reg)) {
-          isValid = true
-        } else {
+        if (!(parseInt(passport[key]) && passport[key].match(reg))) {
           isValid = false
           break;
         }
@@ -170,4 +167,4 @@ const verifyPassportValues = (passport) => {
   return isValid;
 }
 
-main();
+console.log(main());
